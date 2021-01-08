@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sockets</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    
+    <main>
+
+        <div class="container">
+            <fieldset class="box">
+                <legend>Global chat</legend>
+                <form action="" id="formNickname">
+                    <input type="text" name="nickname" id="nickname" placeholder="Nickname">
+                    <button>Entrar</button>
+                </form>
+            </fieldset>
+        </div>
+
+        <ul id="messages"></ul>
+
+        <form action="" id="form">
+            <input type="text" name="input" id="input" >
+            <button>send</button>
+        </form>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        var socket = io();
+
+        var box = document.querySelector('div');
+        var formNickname = document.getElementById('formNickname');
+        var nickname = document.getElementById('nickname');
+        var messages = document.getElementById('messages');
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+
+        user = {};
+
+        formNickname.addEventListener('submit',function(e){
+            e.preventDefault();
+            if(nickname.value)
+            {
+                user.name = nickname.value;
+                socket.emit('user connected', user);
+
+                box.style.display = 'none';
+                messages.style.display = 'block';
+                form.style.display = 'flex';
+
+                socket.on('user connected', user=>{
+                    messages.appendChild(newItem(user));
+                });
+            }
+        });
+
+
+        form.addEventListener('submit',function(e){
+            e.preventDefault();
+
+            if(input.value)
+            {
+                user.message = input.value;
+                socket.emit('send',user);
+                input.value = '';
+            }
+        });
+
+        socket.on('recv',(data)=>{
+            messages.appendChild(newItem(data));
+        });
+
+        socket.on('new connection',data=>{
+            messages.appendChild(newItem(data));
+        });
+
+        socket.on('leave', data=>{
+            messages.appendChild(newItem(data));
+        });
+        
+        function newItem(data)
+        {
+            var item = document.createElement('li');
+            item.innerHTML = data;
+            return item;
+        }
+       
+    </script>
+</body>
+</html>
