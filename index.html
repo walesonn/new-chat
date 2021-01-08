@@ -14,7 +14,7 @@
             <fieldset class="box">
                 <legend>Global chat</legend>
                 <form action="" id="formNickname">
-                    <input type="text" name="nickname" id="nickname" placeholder="Nickname" autocomplete="off">
+                    <input type="text" name="nickname" id="nickname" placeholder="Nickname">
                     <button>Entrar</button>
                 </form>
             </fieldset>
@@ -23,7 +23,7 @@
         <ul id="messages"></ul>
 
         <form action="" id="form">
-            <input type="text" name="input" id="input" >
+            <input type="text" name="input" id="input" autocomplete="off">
             <button>send</button>
         </form>
     </main>
@@ -54,6 +54,7 @@
 
                 socket.on('user connected', user=>{
                     messages.appendChild(newItem(user));
+                    scrolly();
                 });
             }
         });
@@ -72,14 +73,17 @@
 
         socket.on('recv',(data)=>{
             messages.appendChild(newItem(data));
+            scrolly()
         });
 
         socket.on('new connection',data=>{
             messages.appendChild(newItem(data));
+            scrolly();
         });
 
         socket.on('leave', data=>{
             messages.appendChild(newItem(data));
+            scrolly();
         });
         
         function newItem(data)
@@ -88,7 +92,10 @@
             item.innerHTML = data;
             return item;
         }
-       
+
+        function scrolly(){
+            window.scrollTo(0,messages.scrollHeight);
+        }
     </script>
 </body>
 </html>
