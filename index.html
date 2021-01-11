@@ -19,7 +19,8 @@
                 </form>
             </fieldset>
         </div>
-
+	
+	<ul id='lista'></ul>
         <ul id="messages"></ul>
 
         <form action="" id="form">
@@ -38,6 +39,7 @@
         var messages = document.getElementById('messages');
         var form = document.getElementById('form');
         var input = document.getElementById('input');
+	var lista = document.getElementById('lista');
 
         user = {};
 
@@ -77,10 +79,29 @@
         });
 
         socket.on('new connection',data=>{
-            messages.appendChild(newItem(data));
+            messages.appendChild(newItem(data.name));
             scrolly();
         });
 
+	socket.on('welcome',(data)=>{
+		do{
+			lista.childNodes.forEach(element=>{
+				lista.removeChild(element);
+			});
+		}while(lista.childNodes.length > 0);	
+	
+		if(lista.childNodes.length === 0){
+			for(var i in data){
+				var item = document.createElement('li');
+				item.id = data[i].id;
+				item.innerHTML = data[i].name;
+				lista.appendChild(item);
+				scrolly();
+				console.log(data[i].name + " id: "+ data[i].id);
+			}
+		}
+	});
+	
         socket.on('leave', data=>{
             messages.appendChild(newItem(data));
             scrolly();

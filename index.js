@@ -12,13 +12,22 @@ app.get('/style.css',(req,res)=>{
     res.sendFile(__dirname + '/css/style.css');
 });
 
+conectados = [];
 io.on('connection', (socket) =>{
     console.log('New connection accepted');
 
     socket.on('user connected', user=>{
+	conectados.push({name: user.name,id:socket.id});
         io.emit('user connected',user.name + ' entrou');
+        console.log(conectados);
+	for(var i in conectados){
+	    io.to(conectados[i].id).emit('welcome',conectados);
+	}
     });
-
+    
+    console.log(conectados); 
+    
+  
     socket.on('send',(user)=>{
         io.emit('recv',user.name+ ": "+ user.message);
     });
