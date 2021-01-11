@@ -20,10 +20,14 @@ io.on('connection', (socket) =>{
 	conectados.push({name: user.name,id:socket.id});
         io.emit('user connected',user.name + ' entrou');
         console.log(conectados);
-	for(var i in conectados){
-	    io.to(conectados[i].id).emit('welcome',conectados);
-	}
+        for(var i in conectados){
+            io.to(conectados[i].id).emit('welcome',conectados);
+        }
     });
+
+    // socket.on('senfile', (data)=>{
+    //     console.log("Received data:" + data);
+    // });
     
     console.log(conectados); 
     
@@ -33,8 +37,17 @@ io.on('connection', (socket) =>{
     });
 
     socket.on('disconnect',()=>{
-        io.emit('leave','Um usuário acaba de deixar na sala');
-        console.log('Um usuário deixou a sala');
+        console.log('Um usuário deixou a sala ' + socket.id);
+        var count = 0;
+        conectados.forEach(element => {
+                if(element.id == socket.id){
+                    io.emit('leave',socket.id);
+                    conectados.splice(count,1);
+                }
+                count++;
+        });
+
+        console.log(conectados);
     });
 });
 

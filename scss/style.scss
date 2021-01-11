@@ -10,6 +10,10 @@ body{
     background-color: black;
 }
 
+h3{
+    color: lightgreen;
+}
+
 #form{
     display: none;
     position: fixed;
@@ -26,6 +30,10 @@ body{
         border: 0.5px solid lightgreen;
         padding-left: 10px;
         box-shadow: 3px 3px 3px black;
+    }
+    input[type=file]{
+        width: 5rem;
+        height: 3em;
     }
 
     button{
@@ -106,4 +114,19 @@ ul{
         background-color: whitesmoke;
         border-radius: 20px;
     }
+}
+
+#label{
+    display: none;
+}
+#lista{
+    display: none;
+    overflow-x: auto;
+    li{
+        background-color: lightgreen;
+    }
+}
+
+.serverMsg{
+    color: #00b7ff;
 }

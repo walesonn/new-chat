@@ -19,11 +19,13 @@
                 </form>
             </fieldset>
         </div>
-	
-	<ul id='lista'></ul>
+        
+        <h3 id="label">Onlines:</h3>
+        <ul id='lista'></ul>
         <ul id="messages"></ul>
 
-        <form action="" id="form">
+        <form action="" id="form" enctype="multipart/form-data">
+            <!-- <input type="file" name="file" id="file" title="file"> -->
             <input type="text" name="input" id="input" autocomplete="off">
             <button>send</button>
         </form>
@@ -39,7 +41,9 @@
         var messages = document.getElementById('messages');
         var form = document.getElementById('form');
         var input = document.getElementById('input');
-	var lista = document.getElementById('lista');
+        var lista = document.getElementById('lista');
+        var label = document.getElementById('label');
+        // var file = document.getElementById('file');
 
         user = {};
 
@@ -53,9 +57,14 @@
                 box.style.display = 'none';
                 messages.style.display = 'block';
                 form.style.display = 'flex';
+                lista.style.display = 'flex';
+                label.style.display = 'block';
 
                 socket.on('user connected', user=>{
-                    messages.appendChild(newItem(user));
+                    var item = document.createElement('p');
+                    item.innerHTML = user;
+                    item.className = 'serverMsg';
+                    messages.appendChild(item);
                     scrolly();
                 });
             }
@@ -71,6 +80,11 @@
                 socket.emit('send',user);
                 input.value = '';
             }
+            // if(file.value){
+            //     user.message = file.value;
+            //     socket.emit('sendfile',user);
+            //     file.value = '';
+            // }
         });
 
         socket.on('recv',(data)=>{
@@ -103,7 +117,14 @@
 	});
 	
         socket.on('leave', data=>{
-            messages.appendChild(newItem(data));
+            for(var i in lista.childNodes){
+                if(data == lista.childNodes[i].id){
+                    var item = newItem(lista.childNodes[i].innerHTML + " saiu do chat");
+                    messages.appendChild(item);
+                    lista.removeChild(lista.childNodes[i]);
+                }
+            }
+            // messages.appendChild(newItem(data));
             scrolly();
         });
         
