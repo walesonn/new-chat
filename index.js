@@ -33,7 +33,10 @@ io.on('connection', (socket) =>{
     
   
     socket.on('send',(user)=>{
-        io.emit('recv',user.name+ ": "+ user.message);
+        if(user.to) 
+            io.to(user.to).to(socket.id).emit('recv',user.name+": "+user.message);
+        else
+            io.emit('recv',user.name+ ": "+ user.message);
     });
 
     socket.on('disconnect',()=>{

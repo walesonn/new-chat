@@ -18,15 +18,24 @@
                     <button>Entrar</button>
                 </form>
             </fieldset>
+
+            <div id="instrucoes">
+                <p><strong>Dica:</strong>Após entrar no chat tudo o que disser será enviado de forma Global.</p>
+                <p>Para enviar uma mensagem privada basta clicar sobre o nome da pessoa que deseja mandar a mensagem.</p>
+            </div>
+
         </div>
         
-        <h3 id="label">Onlines:</h3>
-        <ul id='lista'></ul>
+        <div id="header">
+            <h3 id="label">Onlines:</h3>
+            <ul id='lista'></ul>
+        </div>
         <ul id="messages"></ul>
 
+        <span id="to"></span>
         <form action="" id="form" enctype="multipart/form-data">
-            <!-- <input type="file" name="file" id="file" title="file"> -->
             <input type="text" name="input" id="input" autocomplete="off">
+            <input type="hidden" name="privado" id="privado" value="">
             <button>send</button>
         </form>
     </main>
@@ -43,7 +52,8 @@
         var input = document.getElementById('input');
         var lista = document.getElementById('lista');
         var label = document.getElementById('label');
-        // var file = document.getElementById('file');
+        var privado = document.getElementById('privado');
+        var to = document.getElementById('to');
 
         user = {};
 
@@ -59,6 +69,8 @@
                 form.style.display = 'flex';
                 lista.style.display = 'flex';
                 label.style.display = 'block';
+                
+                fazSom();
 
                 socket.on('user connected', user=>{
                     var item = document.createElement('p');
@@ -77,46 +89,51 @@
             if(input.value)
             {
                 user.message = input.value;
+                user.to = '';
+                if(privado.value != ''){
+                    user.to = privado.value;
+                } 
                 socket.emit('send',user);
                 input.value = '';
+                privado.value = '';
+                to.innerHTML = '';
             }
-            // if(file.value){
-            //     user.message = file.value;
-            //     socket.emit('sendfile',user);
-            //     file.value = '';
-            // }
         });
 
         socket.on('recv',(data)=>{
+            fazSom();
             messages.appendChild(newItem(data));
             scrolly()
         });
 
         socket.on('new connection',data=>{
+            fazSom();
             messages.appendChild(newItem(data.name));
             scrolly();
         });
 
-	socket.on('welcome',(data)=>{
-		do{
-			lista.childNodes.forEach(element=>{
-				lista.removeChild(element);
-			});
-		}while(lista.childNodes.length > 0);	
-	
-		if(lista.childNodes.length === 0){
-			for(var i in data){
-				var item = document.createElement('li');
-				item.id = data[i].id;
-				item.innerHTML = data[i].name;
-				lista.appendChild(item);
-				scrolly();
-				console.log(data[i].name + " id: "+ data[i].id);
-			}
-		}
-	});
+        socket.on('welcome',(data)=>{
+            do{
+                lista.childNodes.forEach(element=>{
+                    lista.removeChild(element);
+                });
+            }while(lista.childNodes.length > 0);	
+        
+            if(lista.childNodes.length === 0){
+                for(var i in data){
+                    var item = document.createElement('li');
+                    item.id = data[i].id;
+                    item.addEventListener('click',(e)=>{enviarMensagemPrivada(e)});
+                    item.innerHTML = data[i].name;
+                    lista.appendChild(item);
+                    scrolly();
+                    console.log(data[i].name + " id: "+ data[i].id);
+                }
+            }
+        });
 	
         socket.on('leave', data=>{
+            fazSom();
             for(var i in lista.childNodes){
                 if(data == lista.childNodes[i].id){
                     var item = newItem(lista.childNodes[i].innerHTML + " saiu do chat");
@@ -138,6 +155,30 @@
         function scrolly(){
             window.scrollTo(0,messages.scrollHeight);
         }
+
+        function enviarMensagemPrivada(e){
+            fazSom();
+            var recpetor = {name: e.target.innerHTML,id: e.target.id};
+            // var escolha = confirm('Deseja enviar mensagem privada para '+ recpetor.name+'?');
+            // if(escolha) {
+            privado.value=recpetor.id
+            to.innerHTML = 'Mensagem privada para: ' + recpetor.name;
+            // }
+        }
+
+        function fazSom(){
+            let context = new AudioContext(),
+            oscillator = context.createOscillator(),
+            contextGain = context.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 1047;
+            oscillator.connect(contextGain);
+            contextGain.connect(context.destination);
+            oscillator.start(0);                
+
+            contextGain.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.15)
+        }
+
     </script>
 </body>
 </html>

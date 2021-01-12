@@ -41,7 +41,8 @@ h3 {
       background-color: #098bbe; }
 
 #messages {
-  display: none; }
+  display: none;
+  margin-top: 6rem; }
 
 .container {
   width: 100%;
@@ -97,15 +98,47 @@ ul {
     border-radius: 20px; }
 
 #label {
-  display: none; }
+  display: none;
+  position: fixed;
+  top: 0px; }
 
 #lista {
   display: none;
-  overflow-x: auto; }
+  overflow-x: auto;
+  flex-direction: 'row'; }
   #lista li {
-    background-color: lightgreen; }
+    background-color: lightgreen;
+    cursor: pointer; }
+    #lista li:hover {
+      font-weight: 700; }
+
+#header {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: auto;
+  overflow-x: auto;
+  background-color: rgba(0, 0, 0, 0.5); }
 
 .serverMsg {
   color: #00b7ff; }
+
+#to {
+  background-color: #00a7ff;
+  position: absolute;
+  bottom: 50px;
+  font-weight: 600;
+  color: whitesmoke;
+  border-radius: 5px; }
+
+#instrucoes {
+  width: 50%;
+  position: absolute;
+  color: grey;
+  top: 50px; }
+
+@media (max-width: 600px) {
+  #instrucoes {
+    width: 80%; } }
 
 /*# sourceMappingURL=style.css.map */

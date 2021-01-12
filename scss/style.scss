@@ -50,6 +50,7 @@ h3{
 }
 #messages{
     display: none;
+    margin-top: 6rem;
 }
 .container{
     width: 100%;
@@ -118,15 +119,55 @@ ul{
 
 #label{
     display: none;
+    position: fixed;
+    top: 0px;
 }
+
 #lista{
     display: none;
     overflow-x: auto;
+    flex-direction: 'row';
+
     li{
         background-color: lightgreen;
+        cursor: pointer;
+        &:hover{
+            font-weight: 700;
+        }
     }
+}
+
+#header{
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .serverMsg{
     color: #00b7ff;
+}
+
+#to{
+    background-color: #00a7ff;
+    position: absolute;
+    bottom: 50px;
+    font-weight: 600;
+    color: whitesmoke;
+    border-radius: 5px;
+}
+
+#instrucoes{
+    width: 50%;
+    position: absolute;
+    color: grey;
+    top: 50px;
+}
+
+@media (max-width: 600px){
+    #instrucoes{
+        width: 80%;
+    }
 }
